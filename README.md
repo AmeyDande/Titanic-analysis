@@ -70,3 +70,17 @@ Crosstab analysis
 Also :
 Survived vs Pclass vs Age (multi-variable analysis)
 
+ML work 
+Used Linear Regresion model on Age column 
+also 
+SgdRegressor has been used with proper scalling 
+
+The workflow was like 
+1. imports
+2. Feature and Target
+3. Train Test split
+4. Built pipeline
+5. Train Model 
+6. Predict 
+7. Evaluate
+
