@@ -75,11 +75,16 @@ Used Linear Regresion model on Age column
 also 
 SgdRegressor has been used with proper scalling 
 
+Regularization of both the models is done 
+pipe1 is regularised with Ridge l2
+pipe2 of SGDRegressor is regularised with elasticnet
+For the best regularization we used GridSearchCv by making parm_grid which helped us to pass perfect values
+
 The workflow was like 
 1. imports
 2. Feature and Target
 3. Train Test split
-4. Built pipeline
+4. Built pipeline and regularize models
 5. Train Model 
 6. Predict 
 7. Evaluate
