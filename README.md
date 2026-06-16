@@ -1,91 +1,154 @@
-# Titanic-analysis
-📊 Step 1: Understanding the Dataset
-Started by assessing and describing each column in the dataset.
-Identified data types:
-Numerical columns
-Categorical columns
-Understood the purpose of each feature before making any changes.
+# 🚢 Titanic Survival Prediction
 
-🧹 Step 2: Initial Decisions
-PassengerId was NOT dropped, as it may still be useful for tracking records.
-Name column was processed:
-Extracted surname from full names for better feature understanding.
+An end-to-end machine learning project that predicts whether a Titanic passenger would have survived — from raw data and EDA all the way to a deployed REST API and interactive web app.
 
-📈 Step 3: Univariate Analysis (Numerical Columns)
-Identified numerical columns.
-For each numerical feature:
-Used statistical summaries (describe())
-Visualized distributions using Seaborn
-Identified:
-Skewness
-Outliers
-✔️ Observations
-Observations were written after each step.
-Issues were clearly documented.
+🔗 **Live Demo:** https://titanic-analysis-fvvyusvhibvlsjhfthm7dc.streamlit.app  
+📡 **API Docs:** https://titanic-api-2tpg.onrender.com/docs
 
-⚠️ Step 4: Handling Issues in Numerical Data
-Addressed:
-Skewness (when necessary)
-Outliers (only when reasonable)
-Avoided unnecessary data distortion.
+---
 
-New features like :
-lone_traveller
-family_size
-surnames
-fare_per_person
-Were added according to need
+## What This Project Does
 
-📊 Step 5: Categorical Analysis
-Used .value_counts() to understand category frequencies.
-Described each categorical column.
-📉 Visualization
-Visualized category distributions using Seaborn plots.
+1. **Explores the data** — univariate, bivariate, and multivariate analysis with visualizations
+2. **Engineers features** — `family_size`, `lone_traveler`, `fare_per_person` extracted from raw columns
+3. **Imputes missing Age values** — using a Ridge Regression model trained on passengers with known ages, instead of a simple median fill
+4. **Predicts survival** — two classifiers (Logistic Regression and Random Forest) built inside sklearn Pipelines, tuned with GridSearchCV
+5. **Serves predictions via API** — FastAPI app deployed on Render
+6. **Interactive UI** — Streamlit frontend where anyone can fill in passenger details and get a prediction
 
-🔗 Step 6: Bivariate Analysis
-🔢 Numerical vs Numerical
-Age vs Fare
-Explored relationship between passenger age and ticket fare using scatter plots.
+---
 
-🔀 Numerical vs Categorical
-Survived vs Age
-Lone Traveler vs Age
-Sex vs Age
-Pclass vs Age
+## Results
 
-Used:
-Box plots
-Violin plots
+### Age Imputation (Stage 1)
+| Model | MAE | RMSE | R² |
+|---|---|---|---|
+| Ridge Regression | 9.08 | 11.60 | 0.190 |
+| SGD Regressor | 9.09 | 11.61 | 0.189 |
 
-🔠 Categorical vs Categorical
-Survived vs Sex
-Survived vs Pclass
-Survived vs Lone Traveler
-Embarked vs Pclass
+Ridge selected as best model (alpha = 10.0).
 
-Used:
-Count plots
-Crosstab analysis
+**Why Age prediction has low R² (0.19):**  
+Age is genuinely hard to predict from the available features. The dataset only gives us 
+Pclass, Sex, Fare, family size, and embarkation port — none of which have a strong linear 
+relationship with age. A person's age is largely independent of how much they paid or 
+where they boarded. The low R² reflects this — not a modelling mistake, but a data 
+limitation. Despite this, ML-based imputation still captures rough patterns (e.g. 1st 
+class passengers skewing older) and is more informative than filling every missing value 
+with the same median.
 
-Also :
-Survived vs Pclass vs Age (multi-variable analysis)
+### Survival Classification (Stage 2)
+| Model | Accuracy | AUC |
+|---|---|---|
+| Logistic Regression | 79.3% | 0.843 |
+| **Random Forest** | **81.0%** | **0.861** |
 
-ML work 
-Used Linear Regresion model on Age column 
-also 
-SgdRegressor has been used with proper scalling 
+Best Random Forest hyperparameters (via GridSearchCV):
+- `n_estimators`: 200
+- `max_depth`: 5  
+- `max_features`: sqrt
+- `min_samples_split`: 2
 
-Regularization of both the models is done 
-pipe1 is regularised with Ridge l2
-pipe2 of SGDRegressor is regularised with elasticnet
-For the best regularization we used GridSearchCv by making parm_grid which helped us to pass perfect values
+Random Forest classification report:
+```
+              precision    recall  f1-score
 
-The workflow was like 
-1. imports
-2. Feature and Target
-3. Train Test split
-4. Built pipeline and regularize models
-5. Train Model 
-6. Predict 
-7. Evaluate
+Died (0)          0.80      0.90      0.85
+Survived (1)      0.82      0.69      0.75
 
+accuracy                              0.81
+```
+
+---
+
+## Project Structure
+
+```
+Titanic-analysis/
+├── app.py                          # FastAPI prediction API
+├── streamlit_app.py                # Streamlit frontend
+├── titanic_model.pkl               # Saved trained pipeline
+├── requirements.txt                # Dependencies
+├── README.md
+└── notebook/
+    ├── titanic-assessment+EDA.ipynb    # EDA and feature engineering
+    └── titanic-ML-work.ipynb           # Model training and evaluation
+```
+
+---
+
+## How It Works
+
+```
+User fills form
+      ↓
+Streamlit frontend
+      ↓
+POST /predict → FastAPI on Render
+      ↓
+sklearn Pipeline (imputer → scaler → Random Forest)
+      ↓
+{"survived": 0} or {"survived": 1}
+      ↓
+Result displayed in UI
+```
+
+---
+
+## Run Locally
+
+```bash
+git clone https://github.com/AmeyDande/Titanic-analysis.git
+cd Titanic-analysis
+pip install -r requirements.txt
+```
+
+**Run the API:**
+```bash
+uvicorn app:app --reload
+# visit http://127.0.0.1:8000/docs
+```
+
+**Run the UI:**
+```bash
+streamlit run streamlit_app.py
+# visit http://localhost:8501
+```
+
+**Data:** Download `train.csv` from [Kaggle Titanic competition](https://www.kaggle.com/competitions/titanic/data), then run the EDA notebook first to generate `titanic_eda.csv`.
+
+---
+
+## API Usage
+
+**POST** `/predict`
+
+```json
+{
+  "Pclass": 1,
+  "Sex": 1,
+  "Age": 29.0,
+  "SibSp": 0,
+  "Parch": 0,
+  "total_fare": 211.0,
+  "lone_traveler": 1,
+  "family_size": 1,
+  "fare_per_person": 211.0,
+  "Embarked_S": 0,
+  "Embarked_C": 1,
+  "Embarked_Q": 0
+}
+```
+
+Response:
+```json
+{ "survived": 1 }
+```
+
+`Sex`: 0 = male, 1 = female
+
+---
+
+## Tech Stack
+
+Python · scikit-learn · pandas · NumPy · FastAPI · Streamlit · joblib · Seaborn · Matplotlib · Render · Streamlit Cloud
