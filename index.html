@@ -1,0 +1,698 @@
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04080f;--surf:#080e1a;--surf2:#0c1526;
+  --border:#112240;--border2:#1a3461;
+  --muted:#3a5a8a;--dim:#5a80b0;--text:#a8c4e0;--bright:#e2eeff;
+  --gold:#e8b84b;--teal:#2dd4bf;--red:#f87171;--amber:#fbbf24;--green:#4ade80;
+  --mono:'Space Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;margin:0}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--surf);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--bright);white-space:nowrap}
+.logo .sl{color:var(--gold)}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.07em;padding:3px 9px;border-radius:20px;border:1px solid var(--border2);color:var(--dim);white-space:nowrap}
+.pill.live{border-color:var(--teal);color:var(--teal);display:flex;align-items:center;gap:5px}
+.pill.live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 2s infinite}
+.pill.deployed{border-color:var(--green);color:var(--green);display:flex;align-items:center;gap:5px}
+.pill.deployed::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--surf);border-bottom:1px solid var(--border)}
+.nav::-webkit-scrollbar{display:none}
+.tab{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);padding:11px 18px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-n{opacity:.4;margin-right:5px;font-size:10px}
+.page{display:none}.page.active{display:block}
+.hero{padding:36px 28px 28px;border-bottom:1px solid var(--border);background:linear-gradient(160deg,var(--surf2) 0%,var(--bg) 60%);position:relative;overflow:hidden}
+.hero::before{content:'RMS TITANIC 1912';position:absolute;right:-10px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:70px;font-weight:700;color:var(--border);letter-spacing:-.02em;line-height:1;pointer-events:none;user-select:none}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--dim);margin-bottom:12px;text-transform:uppercase}
+.hero-h{font-family:var(--sans);font-size:clamp(22px,3.5vw,38px);font-weight:700;color:var(--bright);line-height:1.15;letter-spacing:-.02em;max-width:600px}
+.hero-h em{color:var(--gold);font-style:normal}
+.hero-sub{margin-top:12px;font-size:13px;color:var(--dim);max-width:520px;line-height:1.65}
+.hero-links{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn-link{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:3px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-decoration:none;transition:all .15s;cursor:pointer}
+.btn-primary{background:rgba(232,184,75,.12);border:1px solid var(--gold);color:var(--gold)}
+.btn-primary:hover{background:rgba(232,184,75,.2)}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--dim)}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal)}
+.btn-api{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.35);color:var(--teal)}
+.btn-api:hover{background:rgba(45,212,191,.15)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border-bottom:1px solid var(--border)}
+.stat{padding:18px 22px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.sv{font-family:var(--mono);font-size:clamp(20px,2.5vw,30px);font-weight:700;color:var(--bright);line-height:1;letter-spacing:-.02em}
+.sv.g{color:var(--gold)}.sv.t{color:var(--teal)}.sv.r{color:var(--red)}.sv.gr{color:var(--green)}
+.sl{margin-top:5px;font-size:9px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-family:var(--mono)}
+.two{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+@media(max-width:580px){.two{grid-template-columns:1fr}}
+.blk{padding:22px 24px;border-right:1px solid var(--border)}
+.blk:last-child{border-right:none}
+.blk-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+.blk-lbl::before{content:'// ';opacity:.5}
+.sec{padding:22px 24px;border-bottom:1px solid var(--border)}
+.sec-t{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.sec-t::before{content:'// '}
+.ai{display:flex;gap:10px;margin-bottom:7px;font-size:13px;color:var(--text);line-height:1.55}
+.an{color:var(--muted);min-width:22px;font-family:var(--mono);font-size:11px}
+.metrics{display:flex;flex-direction:column;gap:12px}
+.mr{display:flex;flex-direction:column;gap:5px}
+.mt{display:flex;justify-content:space-between;font-size:13px}
+.mn{color:var(--text)}.mv{color:var(--bright);font-family:var(--mono);font-weight:700}
+.track{height:3px;background:var(--surf2);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.fill{height:100%;border-radius:2px;background:var(--gold);transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.fill.t{background:var(--teal)}.fill.r{background:var(--red)}.fill.gr{background:var(--green)}
+.cm-wrap{margin-top:4px}
+.cm-row{display:flex;gap:3px;margin-bottom:3px;align-items:center}
+.cm-cell{width:82px;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);border-radius:3px}
+.cm-cell .v{font-size:22px;font-weight:700;line-height:1}
+.cm-cell .s{font-size:8px;letter-spacing:.07em;opacity:.6;margin-top:3px}
+.cm-ax{font-family:var(--mono);font-size:9px;color:var(--muted);padding:4px;width:82px;text-align:right;letter-spacing:.06em}
+.tp{background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal)}
+.tn{background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.25);color:var(--gold)}
+.fp{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:var(--red)}
+.fn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:var(--amber)}
+.tag{display:inline-block;padding:2px 8px;font-family:var(--mono);font-size:9px;letter-spacing:.05em;border-radius:20px}
+.tag-e{background:rgba(232,184,75,.12);color:var(--gold);border:1px solid rgba(232,184,75,.3)}
+.tag-r{background:rgba(90,128,176,.1);color:var(--dim);border:1px solid var(--border2)}
+.imp{height:3px;background:var(--gold);border-radius:2px;margin-top:5px;opacity:.6}
+.pipe{display:flex;flex-direction:column}
+.pstep{display:flex;align-items:stretch}
+.pline{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.pdot{width:10px;height:10px;border-radius:50%;border:2px solid var(--gold);background:var(--bg);flex-shrink:0;margin-top:8px}
+.pdot.done{border-color:var(--teal);background:rgba(45,212,191,.15)}
+.pconn{width:2px;flex:1;background:var(--border2);min-height:16px}
+.pcon{padding:5px 0 20px 14px;flex:1}
+.pt{font-size:13px;font-weight:600;color:var(--bright);margin-bottom:3px}
+.pd{font-size:12px;color:var(--dim);line-height:1.6}
+.pres{display:inline-block;margin-top:5px;font-family:var(--mono);font-size:11px;color:var(--gold);background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);padding:2px 10px;border-radius:2px}
+.pres.t{color:var(--teal);background:rgba(45,212,191,.08);border-color:rgba(45,212,191,.25)}
+.pres.gr{color:var(--green);background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
+.code{background:var(--surf);border:1px solid var(--border2);border-radius:4px;padding:15px 17px;font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;margin-bottom:16px}
+.ck{color:#c792ea}.cf{color:#82aaff}.cs{color:#c3e88d}.cc{color:var(--muted);font-style:italic}.cn{color:#f78c6c}.cv{color:var(--text)}
+.note{margin-top:12px;font-size:12px;color:var(--dim);line-height:1.7;padding:12px;background:var(--surf2);border:1px solid var(--border);border-radius:3px}
+.note-lbl{color:var(--gold);font-family:var(--mono);font-size:10px}
+.ftbl{width:100%;border-collapse:collapse}
+.ftbl th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:7px 12px;border-bottom:1px solid var(--border2)}
+.ftbl td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ftbl tr:last-child td{border-bottom:none}
+.ftbl tr:hover td{background:var(--surf2)}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media(max-width:560px){.insight-grid{grid-template-columns:1fr}}
+.insight-card{padding:14px;background:var(--surf2);border:1px solid var(--border);border-radius:3px}
+.ic-num{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1;margin-bottom:6px}
+.ic-lbl{font-size:12px;color:var(--bright);font-weight:600;margin-bottom:4px}
+.ic-txt{font-size:11px;color:var(--dim);line-height:1.55}
+.roc-big{font-family:var(--mono);font-size:52px;font-weight:700;color:var(--teal);letter-spacing:-.03em;line-height:1;margin-bottom:12px}
+.roc-d{font-size:13px;color:var(--dim);line-height:2}
+.roc-d b{color:var(--text);font-weight:600}
+.foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.foot-l{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gh{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border2);border-radius:3px;font-family:var(--mono);font-size:11px;color:var(--text);text-decoration:none;letter-spacing:.05em;transition:all .15s;cursor:pointer}
+.gh:hover{border-color:var(--gold);color:var(--gold)}
+.chart-wrap{position:relative;width:100%}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.model-cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+@media(max-width:500px){.model-cmp{grid-template-columns:1fr}}
+.model-card{padding:16px;border:1px solid var(--border2);border-radius:3px;background:var(--surf2)}
+.model-card.winner{border-color:var(--green);background:rgba(74,222,128,.04)}
+.model-card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.model-name{font-family:var(--mono);font-size:12px;color:var(--bright);font-weight:700}
+.model-badge{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:20px;background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+</style>
+
+<header class="hdr">
+  <div class="logo">TITANIC <span class="sl">/</span> LAB — <span style="color:var(--dim)">AmeyDande</span></div>
+  <div class="pills">
+    <span class="pill">891 PASSENGERS · SKLEARN</span>
+    <span class="pill">RANDOM FOREST + PIPELINE</span>
+    <span class="pill deployed">LIVE ON RENDER + STREAMLIT</span>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="tab active" onclick="go('ov',this)"><span class="tab-n">00</span>OVERVIEW</button>
+  <button class="tab" onclick="go('eda',this)"><span class="tab-n">01</span>EDA</button>
+  <button class="tab" onclick="go('feat',this)"><span class="tab-n">02</span>FEATURES</button>
+  <button class="tab" onclick="go('pipe',this)"><span class="tab-n">03</span>PIPELINE</button>
+  <button class="tab" onclick="go('met',this)"><span class="tab-n">04</span>METRICS</button>
+  <button class="tab" onclick="go('code',this)"><span class="tab-n">05</span>CODE</button>
+</nav>
+
+<main>
+
+<!-- 00 OVERVIEW -->
+<div id="ov" class="page active">
+  <div class="hero">
+    <div class="eyebrow">Survival Classification · April 15, 1912</div>
+    <div class="hero-h">Who survived<br>when the <em>Titanic</em> sank?</div>
+    <div class="hero-sub">End-to-end ML project — EDA, feature engineering, Ridge-imputed ages, sklearn Pipelines with GridSearchCV, and Random Forest classification. Deployed as REST API on Render + Streamlit UI on Streamlit Cloud.</div>
+    <div class="hero-links">
+      <a class="btn-link btn-primary" href="https://titanic-analysis-fvvyusvhibvlsjhfthm7dc.streamlit.app" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        LIVE APP
+      </a>
+      <a class="btn-link btn-api" href="https://titanic-api-2tpg.onrender.com/docs" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        API DOCS
+      </a>
+      <a class="btn-link btn-secondary" href="https://github.com/AmeyDande/Titanic-analysis" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GITHUB
+      </a>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="sv">891</div><div class="sl">Passengers</div></div>
+    <div class="stat"><div class="sv t">342</div><div class="sl">Survived</div></div>
+    <div class="stat"><div class="sv r">549</div><div class="sl">Did not survive</div></div>
+    <div class="stat"><div class="sv g">38.4%</div><div class="sl">Survival rate</div></div>
+    <div class="stat"><div class="sv gr">81.0%</div><div class="sl">Best accuracy (RF)</div></div>
+    <div class="stat"><div class="sv g">263</div><div class="sl">Ages imputed</div></div>
+  </div>
+
+  <div class="two">
+    <div class="blk">
+      <div class="blk-lbl">WHAT THIS PROJECT COVERS</div>
+      <div class="ai"><span class="an">01</span>EDA — univariate, bivariate analysis on 891 passengers with visual insights</div>
+      <div class="ai"><span class="an">02</span>FEATURES — family_size, fare_per_person, lone_traveler flag, surname extraction</div>
+      <div class="ai"><span class="an">03</span>AGE IMPUTATION — Ridge + SGDRegressor pipelines, GridSearchCV, best by R²</div>
+      <div class="ai"><span class="an">04</span>CLASSIFICATION — LogReg (79.3%) and Random Forest (81.0%) in sklearn Pipelines</div>
+      <div class="ai"><span class="an">05</span>DEPLOYMENT — FastAPI on Render · Streamlit UI on Streamlit Cloud</div>
+    </div>
+    <div class="blk">
+      <div class="blk-lbl">BEST MODEL RESULTS (TEST SET)</div>
+      <div class="roc-big">81.0%</div>
+      <div class="roc-d">
+        Model: <b>Random Forest (GridSearchCV tuned)</b><br>
+        AUC-ROC: <b>0.861</b><br>
+        Precision (survived): <b>0.82</b> · Recall: <b>0.69</b><br>
+        Precision (died): <b>0.80</b> · Recall: <b>0.90</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">TECH STACK</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="tag tag-e">Python</span>
+      <span class="tag tag-e">scikit-learn</span>
+      <span class="tag tag-e">pandas</span>
+      <span class="tag tag-e">NumPy</span>
+      <span class="tag tag-e">FastAPI</span>
+      <span class="tag tag-e">Streamlit</span>
+      <span class="tag tag-e">joblib</span>
+      <span class="tag tag-r">Render</span>
+      <span class="tag tag-r">Streamlit Cloud</span>
+      <span class="tag tag-r">Seaborn · Matplotlib</span>
+    </div>
+  </div>
+</div>
+
+<!-- 01 EDA -->
+<div id="eda" class="page">
+
+  <div class="sec">
+    <div class="sec-t">KEY EDA INSIGHTS</div>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="ic-num" style="color:var(--red)">4×</div>
+        <div class="ic-lbl">Women vs Men Survival</div>
+        <div class="ic-txt">74.2% of women survived vs 18.9% of men. Sex is the single strongest predictor in the dataset.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-num" style="color:var(--gold)">2.6×</div>
+        <div class="ic-lbl">1st class vs 3rd class</div>
+        <div class="ic-txt">1st class had 62.9% survival rate vs just 24.2% in 3rd class. Fare and class are tightly correlated.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-num" style="color:var(--teal)">~70%</div>
+        <div class="ic-lbl">Lone Travelers Died</div>
+        <div class="ic-txt">60.4% travelled alone. Of those, ~70% did not survive — having family aboard improved your odds.</div>
+      </div>
+      <div class="insight-card">
+        <div class="ic-num" style="color:var(--amber)">77%</div>
+        <div class="ic-lbl">Cabin Data Missing</div>
+        <div class="ic-txt">Cabin column dropped entirely. Age had 263 missing values — imputed using Ridge regression model.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">SURVIVAL RATE BY CLASS</div>
+    <div class="metrics">
+      <div class="mr"><div class="mt"><span class="mn">1st Class</span><span class="mv">62.9%</span></div><div class="track"><div class="fill t" style="width:0%" data-w="62.9%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">2nd Class</span><span class="mv">47.3%</span></div><div class="track"><div class="fill" style="width:0%" data-w="47.3%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">3rd Class</span><span class="mv">24.2%</span></div><div class="track"><div class="fill r" style="width:0%" data-w="24.2%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="blk">
+      <div class="blk-lbl">SURVIVAL BY SEX</div>
+      <div class="metrics">
+        <div class="mr"><div class="mt"><span class="mn">Female</span><span class="mv">74.2%</span></div><div class="track"><div class="fill t" style="width:0%" data-w="74.2%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Male</span><span class="mv">18.9%</span></div><div class="track"><div class="fill r" style="width:0%" data-w="18.9%"></div></div></div>
+      </div>
+      <div class="note" style="margin-top:14px"><span class="note-lbl">// FINDING</span><br>Gender was the dominant lifeboat priority factor. "Women and children first" protocol is strongly reflected in the data — women were 4× more likely to survive.</div>
+    </div>
+    <div class="blk">
+      <div class="blk-lbl">PASSENGER DEMOGRAPHICS</div>
+      <div class="metrics">
+        <div class="mr"><div class="mt"><span class="mn">Male passengers</span><span class="mv">64.4%</span></div><div class="track"><div class="fill" style="width:0%" data-w="64.4%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Travelled alone</span><span class="mv">60.4%</span></div><div class="track"><div class="fill" style="width:0%" data-w="60.4%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">3rd class passengers</span><span class="mv">55.1%</span></div><div class="track"><div class="fill r" style="width:0%" data-w="55.1%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Southampton embarkation</span><span class="mv">72.4%</span></div><div class="track"><div class="fill" style="width:0%" data-w="72.4%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">SURVIVAL RATE BY EMBARKATION PORT</div>
+    <div class="metrics">
+      <div class="mr"><div class="mt"><span class="mn">Cherbourg (C) — skewed toward 1st class</span><span class="mv">55.4%</span></div><div class="track"><div class="fill t" style="width:0%" data-w="55.4%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">Queenstown (Q) — skewed toward 3rd class</span><span class="mv">39.0%</span></div><div class="track"><div class="fill" style="width:0%" data-w="39%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">Southampton (S) — most passengers, mixed classes</span><span class="mv">33.7%</span></div><div class="track"><div class="fill r" style="width:0%" data-w="33.7%"></div></div></div>
+    </div>
+    <div class="note"><span class="note-lbl">// BIVARIATE FINDING</span><br>Cherbourg passengers had the highest survival rate — not due to port itself, but because 55% of Cherbourg boarders were 1st class passengers. Embarkation port is a proxy for class and fare.</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">MISSING VALUES AUDIT</div>
+    <div class="metrics">
+      <div class="mr"><div class="mt"><span class="mn">Cabin — dropped (too sparse)</span><span class="mv">77.1% missing</span></div><div class="track"><div class="fill r" style="width:0%" data-w="77.1%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">Age — 263 values imputed via Ridge regression</span><span class="mv">20.0% missing</span></div><div class="track"><div class="fill" style="width:0%" data-w="20%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">Embarked — 2 values filled with mode (S)</span><span class="mv">0.2% missing</span></div><div class="track"><div class="fill t" style="width:0%" data-w="0.4%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">EDA CHARTS</div>
+    <div class="chart-wrap" style="height:260px;margin-bottom:20px">
+      <canvas id="chartSurvivalClass" role="img" aria-label="Bar chart showing survival rates by passenger class">Survival rates: 1st class 62.9%, 2nd class 47.3%, 3rd class 24.2%</canvas>
+    </div>
+    <div class="chart-wrap" style="height:240px;margin-bottom:20px">
+      <canvas id="chartAgeDistrib" role="img" aria-label="Age distribution of Titanic passengers">Age distribution of passengers aboard the Titanic.</canvas>
+    </div>
+    <div class="chart-wrap" style="height:220px">
+      <canvas id="chartFamilySize" role="img" aria-label="Survival rate by family size">Survival rate varies by family size.</canvas>
+    </div>
+  </div>
+</div>
+
+<!-- 02 FEATURES -->
+<div id="feat" class="page">
+  <div class="sec">
+    <div class="sec-t">FEATURE REGISTRY</div>
+    <table class="ftbl">
+      <thead><tr><th>Feature</th><th>Type</th><th>Importance</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Sex</td><td><span class="tag tag-r">Raw</span></td><td><div style="font-size:12px;color:var(--bright)">Very High</div><div class="imp" style="width:95%"></div></td><td style="color:var(--dim);font-size:12px">Encoded: male=0, female=1. Strongest single predictor.</td></tr>
+        <tr><td>Pclass</td><td><span class="tag tag-r">Raw</span></td><td><div style="font-size:12px;color:var(--bright)">High</div><div class="imp" style="width:78%"></div></td><td style="color:var(--dim);font-size:12px">Ordinal 1–3, treated as numeric. 1=upper, 3=lower deck.</td></tr>
+        <tr><td>Age</td><td><span class="tag tag-r">Raw</span></td><td><div style="font-size:12px;color:var(--bright)">Medium</div><div class="imp" style="width:52%"></div></td><td style="color:var(--dim);font-size:12px">263 missing values imputed via Ridge regression (R²=0.190).</td></tr>
+        <tr><td>fare_per_person</td><td><span class="tag tag-e">Engineered</span></td><td><div style="font-size:12px;color:var(--bright)">Medium</div><div class="imp" style="width:48%"></div></td><td style="color:var(--dim);font-size:12px">total_fare ÷ family_size. Fixes fare being shared across family ticket.</td></tr>
+        <tr><td>family_size</td><td><span class="tag tag-e">Engineered</span></td><td><div style="font-size:12px;color:var(--bright)">Medium</div><div class="imp" style="width:42%"></div></td><td style="color:var(--dim);font-size:12px">SibSp + Parch + 1. Small families (2-4) had better survival odds.</td></tr>
+        <tr><td>lone_traveler</td><td><span class="tag tag-e">Engineered</span></td><td><div style="font-size:12px;color:var(--bright)">Low–Med</div><div class="imp" style="width:30%"></div></td><td style="color:var(--dim);font-size:12px">Binary flag. ~70% of lone travelers died.</td></tr>
+        <tr><td>Embarked (C/Q/S)</td><td><span class="tag tag-r">Raw</span></td><td><div style="font-size:12px;color:var(--bright)">Low</div><div class="imp" style="width:16%"></div></td><td style="color:var(--dim);font-size:12px">Manual one-hot encoded into 3 binary columns.</td></tr>
+        <tr><td>surnames</td><td><span class="tag tag-e">Engineered</span></td><td><div style="font-size:12px;color:var(--muted)">EDA only</div><div class="imp" style="width:5%;background:var(--muted)"></div></td><td style="color:var(--dim);font-size:12px">Extracted for family identification in EDA, not fed to model.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">FEATURE IMPORTANCE (RANDOM FOREST)</div>
+    <div class="chart-wrap" style="height:320px">
+      <canvas id="chartFeatImportance" role="img" aria-label="Feature importance from Random Forest classifier">Sex is the most important feature, followed by fare_per_person and Pclass.</canvas>
+    </div>
+    <div class="note" style="margin-top:14px"><span class="note-lbl">// KEY INSIGHT</span><br>Sex dominates — confirming the EDA finding. Engineered features fare_per_person and family_size outperform raw SibSp and Parch individually, validating the feature engineering step.</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">FEATURE ENGINEERING DECISIONS</div>
+    <div class="two" style="border:none">
+      <div class="blk" style="padding-left:0">
+        <div class="blk-lbl">WHY fare_per_person?</div>
+        <div class="ai"><span class="an">→</span>Raw Fare reflects total ticket price for an entire family sharing a ticket</div>
+        <div class="ai"><span class="an">→</span>A family of 5 paying £200 each paid £40/person — not £200/person</div>
+        <div class="ai"><span class="an">→</span>fare_per_person = total_fare ÷ family_size fixes this distortion</div>
+      </div>
+      <div class="blk" style="padding-right:0">
+        <div class="blk-lbl">WHY Ridge for Age imputation?</div>
+        <div class="ai"><span class="an">→</span>Simple median fill treats all passengers as equal — ignores Pclass, Sex, family context</div>
+        <div class="ai"><span class="an">→</span>Ridge captures soft patterns: 1st class passengers skew older</div>
+        <div class="ai"><span class="an">→</span>Low R² (0.19) is expected — Age is largely independent of available features</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 PIPELINE -->
+<div id="pipe" class="page">
+  <div class="sec">
+    <div class="sec-t">AGE IMPUTATION PIPELINE (STAGE 1)</div>
+    <div class="pipe">
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">Feature + Target Split</div><div class="pd">Rows with known Age → training set. 263 rows with missing Age → prediction targets. Features: Pclass, Sex, SibSp, Parch, total_fare, family_size, Embarked. Survived excluded to prevent leakage.</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">pipe1 — Ridge Regression</div><div class="pd">SimpleImputer(median) → StandardScaler → Ridge. GridSearchCV over alpha ∈ [0.001, 0.01, 0.1, 1.0, 10.0] with cv=5.</div><div class="pres">Best alpha: 10.0 · R²=0.190 · MAE=9.08 · RMSE=11.60</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">pipe2 — SGDRegressor</div><div class="pd">SimpleImputer(median) → StandardScaler → SGDRegressor(penalty='l2'). GridSearchCV over learning rate schedules.</div><div class="pres">R²=0.189 · MAE=9.09 · RMSE=11.61</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">Best model → Ridge (R²=0.190)</div><div class="pd">263 missing ages predicted and written back into the dataframe before classification.</div><div class="pres t">✓ Leakage-safe · Fit on train set only</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">CLASSIFICATION PIPELINE (STAGE 2)</div>
+    <div class="pipe">
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">Train/Test Split · 80/20</div><div class="pd">712 training passengers · 179 test passengers. Stratified split preserves class balance.</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">pipe3 — Logistic Regression (baseline)</div><div class="pd">SimpleImputer(median) → StandardScaler → LogisticRegression(). Fast baseline to compare against.</div><div class="pres">Accuracy: 79.3% · AUC: 0.843</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">pipe4 — Random Forest + GridSearchCV ★</div><div class="pd">SimpleImputer(median) → StandardScaler → RandomForestClassifier. GridSearchCV over n_estimators, max_depth, max_features, min_samples_split.</div><div class="pres gr">Accuracy: 81.0% · AUC: 0.861 · Best model ↑</div></div></div>
+      <div class="pstep"><div class="pline"><div class="pdot done"></div><div class="pconn"></div></div><div class="pcon"><div class="pt">Best estimator exported via joblib</div><div class="pd">grid.best_estimator_ saved as titanic_model.pkl · Served by FastAPI /predict endpoint on Render.</div><div class="pres t">✓ Deployed · POST /predict live</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">GRIDSEARCHCV BEST PARAMS (RANDOM FOREST)</div>
+    <table class="ftbl">
+      <thead><tr><th>Parameter</th><th>Search Space</th><th>Best Value</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--mono);font-size:12px">n_estimators</td><td style="color:var(--dim);font-size:12px">[100, 200]</td><td style="color:var(--gold);font-family:var(--mono);font-size:12px">200</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:12px">max_depth</td><td style="color:var(--dim);font-size:12px">[3, 5, None]</td><td style="color:var(--gold);font-family:var(--mono);font-size:12px">5</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:12px">max_features</td><td style="color:var(--dim);font-size:12px">['sqrt', 'log2']</td><td style="color:var(--gold);font-family:var(--mono);font-size:12px">'sqrt'</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:12px">min_samples_split</td><td style="color:var(--dim);font-size:12px">[2, 5]</td><td style="color:var(--gold);font-family:var(--mono);font-size:12px">2</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 04 METRICS -->
+<div id="met" class="page">
+
+  <div class="sec">
+    <div class="sec-t">MODEL COMPARISON</div>
+    <div class="model-cmp">
+      <div class="model-card">
+        <div class="model-card-hdr">
+          <div class="model-name">LOGISTIC REGRESSION</div>
+          <span style="font-family:var(--mono);font-size:9px;color:var(--dim)">BASELINE</span>
+        </div>
+        <div class="metrics">
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">Accuracy</span><span class="mv">79.3%</span></div><div class="track"><div class="fill" style="width:0%" data-w="79.3%"></div></div></div>
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">AUC-ROC</span><span class="mv">0.843</span></div><div class="track"><div class="fill" style="width:0%" data-w="84.3%"></div></div></div>
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">F1 (macro)</span><span class="mv">0.78</span></div><div class="track"><div class="fill" style="width:0%" data-w="78%"></div></div></div>
+        </div>
+      </div>
+      <div class="model-card winner">
+        <div class="model-card-hdr">
+          <div class="model-name">RANDOM FOREST</div>
+          <span class="model-badge">★ SELECTED</span>
+        </div>
+        <div class="metrics">
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">Accuracy</span><span class="mv" style="color:var(--green)">81.0%</span></div><div class="track"><div class="fill gr" style="width:0%" data-w="81%"></div></div></div>
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">AUC-ROC</span><span class="mv" style="color:var(--green)">0.861</span></div><div class="track"><div class="fill gr" style="width:0%" data-w="86.1%"></div></div></div>
+          <div class="mr"><div class="mt"><span class="mn" style="font-size:12px">F1 (macro)</span><span class="mv" style="color:var(--green)">0.80</span></div><div class="track"><div class="fill gr" style="width:0%" data-w="80%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="blk">
+      <div class="blk-lbl">CLASSIFICATION REPORT (RF · 179 test passengers)</div>
+      <div class="metrics">
+        <div class="mr"><div class="mt"><span class="mn">Overall Accuracy</span><span class="mv">81.0%</span></div><div class="track"><div class="fill gr" style="width:0%" data-w="81%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Precision — Survived (1)</span><span class="mv">0.82</span></div><div class="track"><div class="fill" style="width:0%" data-w="82%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Recall — Survived (1)</span><span class="mv">0.69</span></div><div class="track"><div class="fill" style="width:0%" data-w="69%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">F1-Score — Survived</span><span class="mv">0.75</span></div><div class="track"><div class="fill" style="width:0%" data-w="75%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Precision — Died (0)</span><span class="mv">0.80</span></div><div class="track"><div class="fill t" style="width:0%" data-w="80%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">Recall — Died (0)</span><span class="mv">0.90</span></div><div class="track"><div class="fill t" style="width:0%" data-w="90%"></div></div></div>
+        <div class="mr"><div class="mt"><span class="mn">F1-Score — Died</span><span class="mv">0.85</span></div><div class="track"><div class="fill t" style="width:0%" data-w="85%"></div></div></div>
+      </div>
+    </div>
+    <div class="blk">
+      <div class="blk-lbl">CONFUSION MATRIX (RANDOM FOREST)</div>
+      <div class="cm-wrap">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:6px;font-family:var(--mono);letter-spacing:.06em">← PREDICTED →</div>
+        <div class="cm-row"><div style="width:82px"></div><div class="cm-ax">DIED</div><div class="cm-ax">SURVIVED</div></div>
+        <div class="cm-row">
+          <div class="cm-ax" style="text-align:right;padding-right:6px">DIED</div>
+          <div class="cm-cell tn"><div class="v">94</div><div class="s">TRUE NEG</div></div>
+          <div class="cm-cell fp"><div class="v">11</div><div class="s">FALSE POS</div></div>
+        </div>
+        <div class="cm-row">
+          <div class="cm-ax" style="text-align:right;padding-right:6px">SURVIVED</div>
+          <div class="cm-cell fn"><div class="v">23</div><div class="s">FALSE NEG</div></div>
+          <div class="cm-cell tp"><div class="v">51</div><div class="s">TRUE POS</div></div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--dim);font-family:var(--mono);line-height:1.9">
+          Support: <span style="color:var(--text)">105 died · 74 survived</span><br>
+          Macro avg F1: <span style="color:var(--text)">0.80</span><br>
+          Weighted avg F1: <span style="color:var(--text)">0.81</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">AGE MODEL COMPARISON (RIDGE VS SGDREGRESSOR)</div>
+    <div class="metrics">
+      <div class="mr"><div class="mt"><span class="mn">Ridge — Test R²</span><span class="mv">0.190</span></div><div class="track"><div class="fill" style="width:0%" data-w="19%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">SGDRegressor — Test R²</span><span class="mv">0.189</span></div><div class="track"><div class="fill" style="width:0%" data-w="18.9%"></div></div></div>
+      <div class="mr"><div class="mt"><span class="mn">Ridge — MAE</span><span class="mv">9.08 years</span></div><div class="track"><div class="fill r" style="width:0%" data-w="45%"></div></div></div>
+    </div>
+    <div class="note"><span class="note-lbl">// NOTE</span><br>Low R² is expected — Age is largely independent of fare, class, and port. Despite this, ML imputation captures soft trends (e.g., 1st class passengers skewing older) better than a flat median fill.</div>
+  </div>
+</div>
+
+<!-- 05 CODE -->
+<div id="code" class="page">
+  <div class="sec">
+    <div class="sec-t">AGE IMPUTATION — PIPE1 (RIDGE)</div>
+    <div class="code"><span class="cc"># pipe1: Ridge regression for Age imputation</span>
+<span class="ck">from</span> <span class="cv">sklearn.pipeline</span> <span class="ck">import</span> Pipeline
+<span class="ck">from</span> <span class="cv">sklearn.linear_model</span> <span class="ck">import</span> Ridge
+<span class="ck">from</span> <span class="cv">sklearn.model_selection</span> <span class="ck">import</span> GridSearchCV
+<span class="ck">from</span> <span class="cv">sklearn.impute</span> <span class="ck">import</span> SimpleImputer
+<span class="ck">from</span> <span class="cv">sklearn.preprocessing</span> <span class="ck">import</span> StandardScaler
+
+pipe1 = Pipeline([
+    (<span class="cs">'imputer'</span>, SimpleImputer(strategy=<span class="cs">'median'</span>)),
+    (<span class="cs">'scaler'</span>,  StandardScaler()),
+    (<span class="cs">'model'</span>,   Ridge()),
+])
+param_grid = {<span class="cs">'model__alpha'</span>: [<span class="cn">0.001</span>, <span class="cn">0.01</span>, <span class="cn">0.1</span>, <span class="cn">1.0</span>, <span class="cn">10.0</span>]}
+grid = GridSearchCV(pipe1, param_grid, cv=<span class="cn">5</span>)
+grid.<span class="cf">fit</span>(X_train, y_age_train)
+
+<span class="cc"># Best alpha: 10.0 | R²=0.190 | MAE=9.08 | RMSE=11.60</span>
+predicted_ages = grid.best_estimator_.<span class="cf">predict</span>(X_missing)
+df.loc[df[<span class="cs">'Age'</span>].isna(), <span class="cs">'Age'</span>] = predicted_ages  <span class="cc"># 263 rows filled</span></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">CLASSIFICATION — PIPE4 (RANDOM FOREST + GRIDSEARCHCV)</div>
+    <div class="code"><span class="cc"># pipe4: Random Forest with GridSearchCV — best model</span>
+<span class="ck">from</span> <span class="cv">sklearn.ensemble</span> <span class="ck">import</span> RandomForestClassifier
+<span class="ck">from</span> <span class="cv">sklearn.metrics</span> <span class="ck">import</span> accuracy_score, classification_report
+
+pipe4 = Pipeline([
+    (<span class="cs">'imputer'</span>, SimpleImputer(strategy=<span class="cs">'median'</span>)),
+    (<span class="cs">'scaler'</span>,  StandardScaler()),
+    (<span class="cs">'model'</span>,   RandomForestClassifier(random_state=<span class="cn">42</span>)),
+])
+param_grid = {
+    <span class="cs">'model__n_estimators'</span>:     [<span class="cn">100</span>, <span class="cn">200</span>],
+    <span class="cs">'model__max_depth'</span>:        [<span class="cn">3</span>, <span class="cn">5</span>, <span class="cn">None</span>],
+    <span class="cs">'model__max_features'</span>:     [<span class="cs">'sqrt'</span>, <span class="cs">'log2'</span>],
+    <span class="cs">'model__min_samples_split'</span>:[<span class="cn">2</span>, <span class="cn">5</span>],
+}
+grid_rf = GridSearchCV(pipe4, param_grid, cv=<span class="cn">5</span>, scoring=<span class="cs">'accuracy'</span>)
+grid_rf.<span class="cf">fit</span>(X_train, y_train)
+
+y_pred = grid_rf.best_estimator_.<span class="cf">predict</span>(X_test)
+<span class="cf">print</span>(<span class="cf">accuracy_score</span>(y_test, y_pred))   <span class="cc"># 0.810</span>
+<span class="cf">print</span>(<span class="cf">classification_report</span>(y_test, y_pred))
+<span class="cc"># Best: n_estimators=200, max_depth=5, max_features='sqrt', min_samples_split=2</span></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">FASTAPI DEPLOYMENT — APP.PY</div>
+    <div class="code"><span class="cc"># app.py — FastAPI prediction endpoint on Render</span>
+<span class="ck">import</span> <span class="cv">joblib</span>, <span class="cv">numpy</span> <span class="ck">as</span> <span class="cv">np</span>
+<span class="ck">from</span> <span class="cv">fastapi</span> <span class="ck">import</span> FastAPI
+<span class="ck">from</span> <span class="cv">fastapi.middleware.cors</span> <span class="ck">import</span> CORSMiddleware
+<span class="ck">from</span> <span class="cv">pydantic</span> <span class="ck">import</span> BaseModel
+
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=[<span class="cs">"*"</span>], allow_methods=[<span class="cs">"*"</span>], allow_headers=[<span class="cs">"*"</span>])
+model = joblib.<span class="cf">load</span>(<span class="cs">'titanic_model.pkl'</span>)
+
+<span class="ck">class</span> <span class="cf">Passenger</span>(BaseModel):
+    Pclass: <span class="cv">int</span>; Sex: <span class="cv">int</span>; Age: <span class="cv">float</span>; SibSp: <span class="cv">int</span>; Parch: <span class="cv">int</span>
+    total_fare: <span class="cv">float</span>; lone_traveler: <span class="cv">int</span>; family_size: <span class="cv">int</span>
+    fare_per_person: <span class="cv">float</span>; Embarked_S: <span class="cv">int</span>; Embarked_C: <span class="cv">int</span>; Embarked_Q: <span class="cv">int</span>
+
+<span class="ck">@</span>app.<span class="cf">post</span>(<span class="cs">'/predict'</span>)
+<span class="ck">def</span> <span class="cf">predict</span>(p: Passenger):
+    data = np.<span class="cf">array</span>([[p.Pclass, p.Sex, p.Age, p.SibSp, p.Parch,
+                       p.total_fare, p.lone_traveler, p.family_size,
+                       p.fare_per_person, p.Embarked_S, p.Embarked_C, p.Embarked_Q]])
+    <span class="ck">return</span> {<span class="cs">'survived'</span>: <span class="cf">int</span>(model.<span class="cf">predict</span>(data)[<span class="cn">0</span>])}</div>
+  </div>
+</div>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-l">Amey Dande · ML Portfolio · Nagpur, India</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <a class="gh" href="https://titanic-analysis-fvvyusvhibvlsjhfthm7dc.streamlit.app" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Live App
+    </a>
+    <a class="gh" href="https://titanic-api-2tpg.onrender.com/docs" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      API Docs
+    </a>
+    <a class="gh" href="https://github.com/AmeyDande/Titanic-analysis" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      AmeyDande / Titanic-analysis
+    </a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function go(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  animateBars();
+  renderChartsForPage(id);
+}
+
+function animateBars(){
+  setTimeout(()=>{
+    document.querySelectorAll('.fill').forEach(b=>{
+      const w = b.dataset.w || b.style.width;
+      if(w && w !== '0%'){
+        b.dataset.w = b.dataset.w || w;
+        b.style.width = '0%';
+        setTimeout(()=>{b.style.width = b.dataset.w;},50);
+      }
+    });
+  },10);
+}
+
+const GOLD='#e8b84b', TEAL='#2dd4bf', RED='#f87171', GREEN='#4ade80', DIM='#5a80b0', BRIGHT='#a8c4e0', BORDER='#112240';
+
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins:{ legend:{ display:false } },
+  scales:{
+    x:{ grid:{color:BORDER}, ticks:{color:DIM,font:{size:11}} },
+    y:{ grid:{color:BORDER}, ticks:{color:DIM,font:{size:11}} }
+  }
+};
+
+let chartsRendered = {};
+
+function renderChartsForPage(pageId){
+  if(pageId==='eda' && !chartsRendered.eda){
+    chartsRendered.eda = true;
+
+    new Chart(document.getElementById('chartSurvivalClass'),{
+      type:'bar',
+      data:{
+        labels:['1st Class','2nd Class','3rd Class'],
+        datasets:[{
+          label:'Survival %',
+          data:[62.9,47.3,24.2],
+          backgroundColor:[TEAL,GOLD,RED],
+          borderColor:['rgba(45,212,191,.6)','rgba(232,184,75,.6)','rgba(248,113,113,.6)'],
+          borderWidth:1,borderRadius:2
+        }]
+      },
+      options:{...chartDefaults,
+        scales:{
+          x:{...chartDefaults.scales.x,ticks:{color:BRIGHT,font:{size:12}}},
+          y:{...chartDefaults.scales.y,min:0,max:80,ticks:{color:DIM,callback:v=>v+'%'}}
+        },
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}}
+      }
+    });
+
+    const ageBuckets=['0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80+'];
+    const ageData=[54,106,220,167,110,74,38,14,2];
+    new Chart(document.getElementById('chartAgeDistrib'),{
+      type:'bar',
+      data:{
+        labels:ageBuckets,
+        datasets:[{label:'Passengers',data:ageData,backgroundColor:'rgba(90,128,176,0.45)',borderColor:DIM,borderWidth:1,borderRadius:2}]
+      },
+      options:{...chartDefaults,
+        plugins:{
+          legend:{display:false},
+          title:{display:true,text:'Age Distribution of Passengers',color:DIM,font:{size:11,family:'Space Mono'},padding:{bottom:10}}
+        },
+        scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{color:DIM,callback:v=>v+' pax'}}}
+      }
+    });
+
+    const familyLabels=['1 (alone)','2','3','4','5','6','7+'];
+    const familySurvRate=[30.4,55.3,57.8,72.4,20.0,16.7,13.3];
+    new Chart(document.getElementById('chartFamilySize'),{
+      type:'bar',
+      data:{
+        labels:familyLabels,
+        datasets:[{
+          label:'Survival %',
+          data:familySurvRate,
+          backgroundColor:familySurvRate.map(v=>v>50?'rgba(45,212,191,.5)':v>30?'rgba(232,184,75,.5)':'rgba(248,113,113,.5)'),
+          borderColor:familySurvRate.map(v=>v>50?TEAL:v>30?GOLD:RED),
+          borderWidth:1,borderRadius:2
+        }]
+      },
+      options:{...chartDefaults,
+        plugins:{
+          legend:{display:false},
+          title:{display:true,text:'Survival Rate by Family Size',color:DIM,font:{size:11,family:'Space Mono'},padding:{bottom:10}},
+          tooltip:{callbacks:{label:c=>c.raw.toFixed(1)+'%'}}
+        },
+        scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,min:0,max:80,ticks:{color:DIM,callback:v=>v+'%'}}}
+      }
+    });
+  }
+
+  if(pageId==='feat' && !chartsRendered.feat){
+    chartsRendered.feat = true;
+    const feats=['Sex','fare_per_person','Pclass','Age','family_size','total_fare','lone_traveler','Embarked_S','Embarked_C','SibSp','Parch','Embarked_Q'];
+    const importance=[0.287,0.148,0.121,0.118,0.092,0.072,0.045,0.034,0.028,0.022,0.018,0.015];
+    const colors = importance.map((v,i)=>i===0?GOLD:i<3?TEAL:DIM);
+    new Chart(document.getElementById('chartFeatImportance'),{
+      type:'bar',
+      data:{
+        labels:feats,
+        datasets:[{label:'Importance',data:importance,backgroundColor:colors,borderColor:colors,borderWidth:1,borderRadius:2}]
+      },
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.raw*100).toFixed(1)+'%'}}},
+        scales:{
+          x:{grid:{color:BORDER},ticks:{color:DIM,callback:v=>(v*100).toFixed(0)+'%'}},
+          y:{grid:{color:'transparent'},ticks:{color:BRIGHT,font:{size:12,family:'Space Mono'}}}
+        }
+      }
+    });
+  }
+}
+
+window.addEventListener('load',()=>{
+  animateBars();
+  renderChartsForPage('ov');
+});
+</script>
