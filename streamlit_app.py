@@ -31,13 +31,22 @@ if st.button('Predict'):
         "Embarked_Q": 1 if embarked == 'Q' else 0
     }
 
-    response = requests.post(
-        'https://titanic-api-2tpg.onrender.com/predict',
-        json=payload
-    )
-    result = response.json()
+    try:
+        response = requests.post(
+            'https://titanic-api-2tpg.onrender.com/predict',
+            json=payload,
+            timeout=15
+        )
+        response.raise_for_status()
+        result = response.json()
 
-    if result['survived'] == 1:
-        st.success('✅ This passenger would have SURVIVED')
-    else:
-        st.error('❌ This passenger would NOT have survived')
+        if result['survived'] == 1:
+            st.success('✅ This passenger would have SURVIVED')
+        else:
+            st.error('❌ This passenger would NOT have survived')
+    except requests.exceptions.Timeout:
+        st.warning('⏳ The API is waking up (free tier cold start). Wait 10 seconds and try again.')
+    except requests.exceptions.ConnectionError:
+        st.error('🔌 Could not reach the API. Check your internet or Render deployment status.')
+    except Exception as e:
+        st.error(f'Something went wrong: {e}')       
