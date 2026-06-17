@@ -4,6 +4,7 @@ An end-to-end machine learning project that predicts whether a Titanic passenger
 
 🔗 **Live Demo:** https://titanic-analysis-fvvyusvhibvlsjhfthm7dc.streamlit.app  
 📡 **API Docs:** https://titanic-api-2tpg.onrender.com/docs
+🌐 **Titanic Lab:** https://ameydande.github.io/Titanic-analysis/
 
 ---
 
@@ -148,7 +149,8 @@ Response:
 `Sex`: 0 = male, 1 = female
 
 ---
-
+Also added Interactive titanic lab which includes EDA, Classification matrix, PLots, Live app and API Docs URL  
+ 
 ## Tech Stack
 
 Python · scikit-learn · pandas · NumPy · FastAPI · Streamlit · joblib · Seaborn · Matplotlib · Render · Streamlit Cloud
