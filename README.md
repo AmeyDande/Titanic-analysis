@@ -3,7 +3,7 @@
 An end-to-end machine learning project that predicts whether a Titanic passenger would have survived — from raw data and EDA all the way to a deployed REST API and interactive web app.
 
 🔗 **Live Demo:** https://titanic-analysis-fvvyusvhibvlsjhfthm7dc.streamlit.app  
-📡 **API Docs:** https://titanic-api-2tpg.onrender.com/docs
+📡 **API Docs:** https://titanic-api-2tpg.onrender.com/docs    
 🌐 **Titanic Lab:** https://ameydande.github.io/Titanic-analysis/
 
 ---
